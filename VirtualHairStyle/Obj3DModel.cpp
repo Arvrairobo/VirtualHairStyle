@@ -104,12 +104,12 @@ bool load_obj(const char * path, Obj3DModel_t &model)
 	}
 
 	for (unsigned int i = 0; i < v_indices.size(); i++) {
-		model.out_vertices.push_back(temp_vertices[v_indices[i] - 1]);
+		model.vertices.push_back(temp_vertices[v_indices[i] - 1]);
 	}
 	for (unsigned int i = 0; i < uv_indices.size(); i++) {
-		model.out_uvs.push_back(temp_uvs[uv_indices[i] - 1]);
+		model.uvs.push_back(temp_uvs[uv_indices[i] - 1]);
 	}
 	for (unsigned int i = 0; i < n_indices.size(); i++) {
-		model.out_normals.push_back(temp_normals[n_indices[i] - 1]);
+		model.normals.push_back(temp_normals[n_indices[i] - 1]);
 	}
 }

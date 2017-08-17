@@ -255,7 +255,7 @@ void display()
 	glm::mat4 mvp = calc_mvp_mat();
 	GLuint matrix_id = glGetUniformLocation(head_program.get_program_id(), "mvp");
 	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
-	head_program.draw_vertices(0, vertexbuffer, 3, GL_TRIANGLES, 0, head.out_vertices.size());
+	head_program.draw_vertices(0, vertexbuffer, 3, GL_TRIANGLES, 0, head.vertices.size());
 
 	glutSwapBuffers();
 }

@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
 	glGenBuffers(1, &vertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, head.out_vertices.size()*sizeof(glm::vec3), &head.out_vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, head.vertices.size()*sizeof(glm::vec3), &head.vertices[0], GL_STATIC_DRAW);
 	
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
