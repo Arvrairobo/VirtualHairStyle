@@ -14,7 +14,6 @@ void render_face(cv::Mat &img, const dlib::full_object_detection& d) {
 		"\n\t Invalid inputs were given to this function. "
 		<< "\n\t d.num_parts():  " << d.num_parts()
 	);
-
 	draw_point(img, d, 8); // chin
 	draw_point(img, d, 30); // nose
 	draw_point(img, d, 48); // left lip
@@ -23,14 +22,14 @@ void render_face(cv::Mat &img, const dlib::full_object_detection& d) {
 	draw_point(img, d, 45); // right eye
 	draw_point(img, d, 0); // left ear
 	draw_point(img, d, 16); // right ear
-
 }
 
 void add_point(std::vector<cv::Point2d> &img_points, const dlib::full_object_detection& d, const int idx) {
 	img_points.push_back(cv::Point2d(d.part(idx).x(), d.part(idx).y()));
 }
 
-#define FACE_DOWNSAMPLE_RATIO 2.5
+#define FACE_DOWNSAMPLE_RATIO 1.5
+cv::Mat background_image;
 
 void detect_2d_points(cv::Mat &img) {
 	std::vector<cv::Point2d> img_points;
@@ -43,7 +42,6 @@ void detect_2d_points(cv::Mat &img) {
 
 	std::vector<dlib::rectangle> faces = detector(cimg_small);
 	std::vector<dlib::full_object_detection> shapes;
-
 	for (unsigned long i = 0; i < faces.size(); ++i) {
 		dlib::rectangle r(
 			(long)(faces[i].left() * FACE_DOWNSAMPLE_RATIO),
@@ -53,7 +51,7 @@ void detect_2d_points(cv::Mat &img) {
 		);
 		dlib::full_object_detection shape = pose_model(cimg, r);
 		shapes.push_back(shape);
-		//render_face(img, shape);
+		render_face(img, shape);
 		add_point(img_points, shape, 8); // chin
 		add_point(img_points, shape, 30); // nose
 		add_point(img_points, shape, 48); // left lip
@@ -64,6 +62,6 @@ void detect_2d_points(cv::Mat &img) {
 		add_point(img_points, shape, 16); // right ear
 		break;
 	}
-	imgTex.set(img);
-	if (!img_points.empty()) solve_head_pos(Mat(img_points), img);
+	if (!img_points.empty()) solve_head_pos(Mat(img_points), &img);
+	img.copyTo(background_image);
 }
