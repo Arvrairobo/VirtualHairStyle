@@ -3,6 +3,7 @@
 *.sln
 VirtualHairStyle/Debug/
 VirtualHairStyle/Release/
+VirtualHairStyle/x64/
 VirtualHairStyle.VC.*
 VirtualHairStyle/haarcascades*
 Debug/
@@ -14,3 +15,6 @@ Release/*
 *.exe
 *.rar
 VirtualHairStyle/shape_predictor_68_face_landmarks.dat
+*.csv
+*.xml
+*.cd
