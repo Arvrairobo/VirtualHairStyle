@@ -1,13 +1,18 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <GL\glew.h>
 #include <GL\GL.h>
 #include <GL\GLU.h>
+
+#include <iostream>
+#include <stdio.h>
+#include <thread>
+
 #include "PoseEstimation.h"
 #include "HeadPos.h"
 #include "OGL_OCV_common.h"
-#include <iostream>
-#include <stdio.h>
 #include "Obj3DModel.h"
-#include <thread>
+#include "Shader.h"
+
 using namespace std;
 using namespace cv;
 
@@ -57,35 +62,6 @@ private:
 	}
 };
 
-GLuint background_texture;
-
-GLuint init_texture() {
-	GLuint t = 0;
-	glGenTextures(1, &t);
-	glBindTexture(GL_TEXTURE_2D, t);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	return t;
-}
-
-static GLfloat background_vbuf_data[] = {
-	-1.0, -1.0,  0.0,
-	1.0, -1.0,  0.0,
-	1.0,  1.0,  0.0,
-	-1.0,  1.0,  0.0,
-};
-
-GLuint background_array_id;
-GLuint background_buffer;
-
-GLuint VertexArrayID;
-GLuint vertexbuffer;
-
-GLint uniform_background_texture;
-GLint attribute_coord3d, attribute_v_color, attribute_texcoord;
-
-#include "Shader.h"
 ShaderProgram_t head_program;
 ShaderProgram_t background_program;
 
@@ -97,8 +73,14 @@ GLfloat background_texcoords[] = {
 	1.0, 0.0,
 };
 
-GLuint background_texcoords_buffer;
-Obj3DModel_t head, hair;
+static GLfloat background_vbuf_data[] = {
+	-1.0, -1.0,  0.0,
+	1.0, -1.0,  0.0,
+	1.0,  1.0,  0.0,
+	-1.0,  1.0,  0.0,
+};
+
+ObjGL_t *head, *hair, *background;
 
 int main(int argc, char **argv)
 {
@@ -120,55 +102,28 @@ int main(int argc, char **argv)
 	cout << "shape_predictor_68_face_landmark.dat deserialized" << endl;
 	if (glewInit() != GLEW_OK)
 		throw std::exception("Failed to initialize GLEW\n");
-
-	load_obj("3D models\\head_v3.obj", head);
-
+	
 	head_program = ShaderProgram_t("shaders\\head.vert", "shaders\\head.frag");
 	head_program.create_shader_program();
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, head.vertices.size()*sizeof(glm::vec3), &head.vertices[0], GL_STATIC_DRAW);
 	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
+	head = new ObjGL_t("3D models\\head_v3.obj"); 
+	head->bind_vao();
+	head->add_vbo(VBO_VERTICES);
+	head->unbind_vao();
 
 
 	background_program = ShaderProgram_t("shaders\\background.vert", "shaders\\background.frag");
 	background_program.create_shader_program();
 
-	glGenVertexArrays(1, &background_array_id);
-	glBindVertexArray(background_array_id);
-
-	glGenBuffers(1, &background_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, background_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(background_vbuf_data), background_vbuf_data, GL_STATIC_DRAW);
-
-	
 	VideoCapture_t cap;
-	background_texture = init_texture();
-	
-	attribute_texcoord = glGetAttribLocation(background_program.get_program_id(), "texcoord");
-	if (attribute_texcoord == -1) {
-		cerr << "Could not bind attribute texcoord" << endl;
-		return false;
-	}
+	background_program.bind_attrib_location("texcoord");
 
-	glGenBuffers(1, &background_texcoords_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, background_texcoords_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(background_texcoords), background_texcoords, GL_STATIC_DRAW);
-	
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	background = new ObjGL_t();
+	background->bind_vao(); 
+	background->add_data(VBO_VERTICES, sizeof(background_vbuf_data), background_vbuf_data);
+	background->gen_texture();
+	background->add_data(VBO_TEXCOORDS, sizeof(background_texcoords), background_texcoords);
+	background->unbind_vao();
 
 	rvec = cv::Mat(rv);
 	double _d[9] = { 1,0,0,
@@ -180,12 +135,8 @@ int main(int argc, char **argv)
 
 	glutMainLoop();
 
-	glDeleteVertexArrays(1, &VertexArrayID);
-	glDeleteBuffers(1, &vertexbuffer);
-
-	glDeleteVertexArrays(1, &background_array_id);
-	glDeleteBuffers(1, &background_buffer);
-	glDeleteBuffers(1, &background_texcoords_buffer);
+	head->~ObjGL_t();
+	background->~ObjGL_t();
 }
 /*
 int main(int argc, char **argv) {

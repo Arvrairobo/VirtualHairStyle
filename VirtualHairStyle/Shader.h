@@ -1,6 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <string>
+#include <map>
 
 class ShaderProgram_t
 {
@@ -15,10 +16,13 @@ public:
 	void enable_attr(GLint attribut);
 	void disable_attr(GLint attribut);
 	void bind_array_buffer(GLint attribut, GLuint vertex_buffer, GLuint num_of_elem);
+	GLuint get_attrib_location(const char *attr_name);
+	void bind_attrib_location(const char *attr_name);
 private:
 	GLuint _vertex_shader_id;
 	GLuint _fragment_shader_id;
 	GLuint _program_id;
+	std::map <std::string, GLuint> attr_locations;
 	std::string load_shader_code(GLuint shader_id, const char *shader_file_path);
 	void compile_shader(GLuint shader_id, const char *shader_code);
 };

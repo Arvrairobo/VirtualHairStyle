@@ -200,7 +200,7 @@ static void update_background_texture()
 
 		glEnable(GL_TEXTURE_2D);
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, 1024, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, tmp.data);
-		glBindTexture(GL_TEXTURE_2D, background_texture);
+		glBindTexture(GL_TEXTURE_2D, background->get_texture_id());
 	} else {
 		printf("background_image is NULL\n");
 	}
@@ -236,12 +236,12 @@ static void background_draw()
 	background_program.use();
 
 	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(uniform_background_texture, /*GL_TEXTURE*/0);
-	glBindTexture(GL_TEXTURE_2D, background_texture);
+	//glUniform1i(uniform_background_texture, /*GL_TEXTURE*/0);
+	glBindTexture(GL_TEXTURE_2D, background->get_texture_id());
 
-	background_program.draw_vertices(0, background_buffer, 3, GL_QUADS, 0, 4);
-	background_program.enable_attr(attribute_texcoord);
-	background_program.bind_array_buffer(attribute_texcoord, background_texcoords_buffer, 2);
+	background_program.draw_vertices(0, background->get_vbo(VBO_VERTICES), 3, GL_QUADS, 0, 4);
+	background_program.enable_attr(background_program.get_attrib_location("texcoord"));
+	background_program.bind_array_buffer(background_program.get_attrib_location("texcoord"), background->get_vbo(VBO_TEXCOORDS), 2);
 }
 
 void display()
@@ -255,7 +255,7 @@ void display()
 	glm::mat4 mvp = calc_mvp_mat();
 	GLuint matrix_id = glGetUniformLocation(head_program.get_program_id(), "mvp");
 	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
-	head_program.draw_vertices(0, vertexbuffer, 3, GL_TRIANGLES, 0, head.vertices.size());
+	head_program.draw_vertices(0, head->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, head->get_vsize());
 
 	glutSwapBuffers();
 }

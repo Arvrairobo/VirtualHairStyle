@@ -116,3 +116,22 @@ void ShaderProgram_t::draw_vertices(
 	glDrawArrays(mode, first, count);
 	disable_attr(attribut);
 }
+
+void ShaderProgram_t::bind_attrib_location(const char *attr_name)
+{
+	GLuint location = glGetAttribLocation(_program_id, attr_name);
+	if (location == -1) {
+		std::cerr << "Could not bind attribute " << attr_name << std::endl;
+	}
+	attr_locations.insert(std::pair<std::string, GLuint>(attr_name, location));
+}
+
+GLuint ShaderProgram_t::get_attrib_location(const char *attr_name)
+{
+	auto it = attr_locations.find(attr_name);
+	if (it == attr_locations.end()) {
+		std::cerr << "Could not bind attribute " << attr_name << std::endl;
+		throw 1;
+	}
+	return it->second;
+}
