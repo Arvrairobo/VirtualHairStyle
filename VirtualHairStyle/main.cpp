@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	hair_program = ShaderProgram_t("shaders\\hair.vert", "shaders\\hair.frag");
 	hair_program.create_shader_program();
 
-	hair = new ObjGL_t("3D models\\hair\\hair_1.obj");
+	hair = new ObjGL_t("3D models\\hair\\hair_v1.obj");
 	hair->bind_vao();
 	hair->add_vbo(VBO_VERTICES);
 	hair->unbind_vao();
