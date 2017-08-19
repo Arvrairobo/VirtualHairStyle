@@ -24,5 +24,6 @@ void solve_head_pos(cv::Mat& ip, cv::Mat* img);
 
 extern ShaderProgram_t head_program;
 extern ShaderProgram_t background_program;
+extern ShaderProgram_t hair_program;
 
 extern cv::Mat rmat;

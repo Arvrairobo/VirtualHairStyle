@@ -251,11 +251,20 @@ void display()
 	
 	background_draw();
 
-	head_program.use();
 	glm::mat4 mvp = calc_mvp_mat();
-	GLuint matrix_id = glGetUniformLocation(head_program.get_program_id(), "mvp");
+	GLuint matrix_id;	
+	
+	glDrawBuffer(GL_NONE);
+	head_program.use();
+	matrix_id = glGetUniformLocation(head_program.get_program_id(), "mvp");
 	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
 	head_program.draw_vertices(0, head->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, head->get_vsize());
+	glDrawBuffer(GL_FRONT_AND_BACK);
+
+	hair_program.use();
+	matrix_id = glGetUniformLocation(hair_program.get_program_id(), "mvp");
+	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
+	head_program.draw_vertices(0, hair->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, hair->get_vsize());
 
 	glutSwapBuffers();
 }

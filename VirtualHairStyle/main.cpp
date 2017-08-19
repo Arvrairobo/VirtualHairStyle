@@ -64,6 +64,7 @@ private:
 
 ShaderProgram_t head_program;
 ShaderProgram_t background_program;
+ShaderProgram_t hair_program;
 
 GLfloat background_texcoords[] = {
 	// front
@@ -111,6 +112,13 @@ int main(int argc, char **argv)
 	head->add_vbo(VBO_VERTICES);
 	head->unbind_vao();
 
+	hair_program = ShaderProgram_t("shaders\\hair.vert", "shaders\\hair.frag");
+	hair_program.create_shader_program();
+
+	hair = new ObjGL_t("3D models\\hair\\hair_1.obj");
+	hair->bind_vao();
+	hair->add_vbo(VBO_VERTICES);
+	hair->unbind_vao();
 
 	background_program = ShaderProgram_t("shaders\\background.vert", "shaders\\background.frag");
 	background_program.create_shader_program();
@@ -137,6 +145,7 @@ int main(int argc, char **argv)
 
 	head->~ObjGL_t();
 	background->~ObjGL_t();
+	hair->~ObjGL_t();
 }
 /*
 int main(int argc, char **argv) {
