@@ -199,8 +199,8 @@ static void update_background_texture()
 		}
 
 		glEnable(GL_TEXTURE_2D);
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, 1024, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, tmp.data);
 		glBindTexture(GL_TEXTURE_2D, background->get_texture_id());
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, 1024, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, tmp.data);
 	} else {
 		printf("background_image is NULL\n");
 	}
@@ -232,13 +232,9 @@ static glm::mat4 calc_mvp_mat()
 
 static void background_draw()
 {
-	update_background_texture();
 	background_program.use();
-
-	glActiveTexture(GL_TEXTURE0);
-	//glUniform1i(uniform_background_texture, /*GL_TEXTURE*/0);
-	glBindTexture(GL_TEXTURE_2D, background->get_texture_id());
-
+	update_background_texture();
+	background->bind_vao();
 	background_program.draw_vertices(0, background->get_vbo(VBO_VERTICES), 3, GL_QUADS, 0, 4);
 	background_program.enable_attr(background_program.get_attrib_location("texcoord"));
 	background_program.bind_array_buffer(background_program.get_attrib_location("texcoord"), background->get_vbo(VBO_TEXCOORDS), 2);
@@ -254,18 +250,25 @@ void display()
 	glm::mat4 mvp = calc_mvp_mat();
 	GLuint matrix_id;	
 	
+	// Render head
 	glDrawBuffer(GL_NONE);
 	head_program.use();
+	head->bind_vao();
 	matrix_id = glGetUniformLocation(head_program.get_program_id(), "mvp");
 	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
 	head_program.draw_vertices(0, head->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, head->get_vsize());
 	glDrawBuffer(GL_FRONT_AND_BACK);
-
+	
+	// Render hair
 	hair_program.use();
+	glBindTexture(GL_TEXTURE_2D, hair->get_texture_id());
+	hair->bind_vao();
 	matrix_id = glGetUniformLocation(hair_program.get_program_id(), "mvp");
 	glUniformMatrix4fv(matrix_id, 1, GL_FALSE, &mvp[0][0]);
 	hair_program.draw_vertices(0, hair->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, hair->get_vsize());
-
+	hair_program.enable_attr(hair_program.get_attrib_location("vertexUV"));
+	hair_program.bind_array_buffer(hair_program.get_attrib_location("vertexUV"), hair->get_vbo(VBO_TEXCOORDS), 2);
+	
 	glutSwapBuffers();
 }
 
