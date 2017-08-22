@@ -20,3 +20,4 @@
 extern dlib::frontal_face_detector detector;
 extern dlib::shape_predictor pose_model;
 void detect_2d_points(cv::Mat &img);
+void solve_head_pos(cv::Mat& ip, cv::Mat* img);

@@ -5,6 +5,36 @@
 #include "PoseEstimation.h"
 #include "HeadPos.h"
 
+cv::Mat cam_mat;
+
+void solve_head_pos(cv::Mat& ip, cv::Mat *img) {
+	int max_d = MAX(img->rows, img->cols);
+	cam_mat = (cv::Mat_<double>(3, 3) << max_d, 0, img->cols / 2.0,
+		0, max_d, img->rows / 2.0,
+		0, 0, 1.0);
+	double _dc[] = { 0,0,0,0 };
+
+	if (!solvePnP(op, ip, cam_mat, cv::Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, cv::SOLVEPNP_EPNP)) {
+		std::cout << "solvePnP was fail" << std::endl;
+	}
+	/* UNRESOLVED: Sometimes blink effect. TODO
+
+	cv::Point2d *img_points = ip.ptr<cv::Point2d>();
+	std::vector<Point3d> nose_end_point3D;
+	std::vector<Point2d> nose_end_point2D;
+	nose_end_point3D.push_back(Point3d(0, 0, 10.0));
+	nose_end_point3D.push_back(Point3d(0, 10.0, 0));
+	nose_end_point3D.push_back(Point3d(10.0, 0, 0));
+	std::cout << "begin ... ";
+	projectPoints(nose_end_point3D, rvec, tvec, cam_mat, Mat(1, 4, CV_64FC1, _dc), nose_end_point2D);
+	cv::line(*img, img_points[1], nose_end_point2D[0], cv::Scalar(255, 0, 0), 2); //blue z
+	cv::line(*img, img_points[1], nose_end_point2D[1], cv::Scalar(0, 255, 0), 2); //green y
+	cv::line(*img, img_points[1], nose_end_point2D[2], cv::Scalar(0, 0, 255), 2); //red x
+	std::cout << "end" << std::endl;*/
+
+	cv::Rodrigues(rvec, rmat);
+}
+
 void draw_point(cv::Mat &img, const dlib::full_object_detection& d, const int point_idx) {
 	cv::circle(img, cv::Point(d.part(point_idx).x(), d.part(point_idx).y()), 3, cv::Scalar(255, 0, 0), -1);
 }
