@@ -161,7 +161,7 @@ bool ObjGL_t::load_obj(const char *path)
 				if (vt == false && vn == false) sscanf(str, "%d", &v_idx[i]);
 				else if (vt == false && vn == true) sscanf(str, "%d//%d", &v_idx[i], &n_idx[i]);
 				else if (vt == true && vn == false) sscanf(str, "%d/%d", &v_idx[i], &uv_idx[i]);
-				else if (vt == true && vn == true) sscanf(str, "%d/%d/%d", &v_idx[i], &uv_idx[i], &n_idx[i]);
+				else sscanf(str, "%d/%d/%d", &v_idx[i], &uv_idx[i], &n_idx[i]);
 			}
 			v_indices.push_back(v_idx[0]);
 			v_indices.push_back(v_idx[1]);
@@ -206,6 +206,7 @@ bool ObjGL_t::load_obj(const char *path)
 	for (unsigned int i = 0; i < n_indices.size(); i++) {
 		obj.normals.push_back(temp_normals[n_indices[i] - 1]);
 	}
+	return true;
 }
 
 void ObjGL_t::set_texture_data(cv::Mat &data)
