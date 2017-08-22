@@ -139,7 +139,7 @@ static glm::mat4 calc_mvp_mat()
 			rot[i * 3 + j] = rmat.at<double>(i, j);
 		}
 	}
-	float m[16] = {
+	double m[16] = {
 		-rot[0], -rot[3], -rot[6], 0.0f,
 		-rot[1], -rot[4], -rot[7], 0.0f,
 		-rot[2], -rot[5], -rot[8], 0.0f,
