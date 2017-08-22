@@ -114,10 +114,15 @@ int main(int argc, char **argv)
 
 	hair_program = ShaderProgram_t("shaders\\hair.vert", "shaders\\hair.frag");
 	hair_program.create_shader_program();
+	
+	hair_program.bind_attrib_location("vertexUV");
 
 	hair = new ObjGL_t("3D models\\hair\\hair_v1.obj");
 	hair->bind_vao();
 	hair->add_vbo(VBO_VERTICES);
+	hair->set_texture_data(cv::imread("3D models\\hair\\hair_texture_1.png", IMREAD_UNCHANGED));
+	hair->gen_texture();
+	hair->add_vbo(VBO_TEXCOORDS);
 	hair->unbind_vao();
 
 	background_program = ShaderProgram_t("shaders\\background.vert", "shaders\\background.frag");
