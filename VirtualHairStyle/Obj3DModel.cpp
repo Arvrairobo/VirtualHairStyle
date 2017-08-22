@@ -121,23 +121,19 @@ bool ObjGL_t::load_obj(const char *path)
 		if (strcmp(line_header, "o") == 0) {
 			char object[128];
 			fscanf(file, "%s", object);
-		}
-		else if (strcmp(line_header, "v") == 0) {
+		} else if (strcmp(line_header, "v") == 0) {
 			glm::vec3 vertex;
 			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 			temp_vertices.push_back(vertex);
-		}
-		else if (strcmp(line_header, "vt") == 0) {
+		} else if (strcmp(line_header, "vt") == 0) {
 			glm::vec2 uv;
 			fscanf(file, "%f %f\n", &uv.x, &uv.y);
 			temp_uvs.push_back(uv);
-		}
-		else if (strcmp(line_header, "vn") == 0) {
+		} else if (strcmp(line_header, "vn") == 0) {
 			glm::vec3 normal;
 			fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
 			temp_normals.push_back(normal);
-		}
-		else if (strcmp(line_header, "f") == 0) {
+		} else if (strcmp(line_header, "f") == 0) {
 			char str[128];
 			unsigned int v_idx[3] = { 0 }, uv_idx[3] = { 0 }, n_idx[3] = { 0 };
 			bool vt = false, vn = false;
@@ -152,13 +148,11 @@ bool ObjGL_t::load_obj(const char *path)
 						if (str[i + 1] == '/') {
 							vn = true;
 							break;
-						}
-						else {
+						} else {
 							if (vt == true) {
 								vn = true;
 								break;
-							}
-							else {
+							} else {
 								vt = true;
 							}
 						}
@@ -183,18 +177,15 @@ bool ObjGL_t::load_obj(const char *path)
 				n_indices.push_back(n_idx[1]);
 				n_indices.push_back(n_idx[2]);
 			}
-		}
-		else if (strcmp(line_header, "s") == 0) {
+		} else if (strcmp(line_header, "s") == 0) {
 			char str[128];
 			fscanf(file, "%s", str);
 			if (strcmp(str, "off") == 0) {
 
-			}
-			else {
+			} else {
 
 			}
-		}
-		else if (line_header[0] == '#') {
+		} else if (line_header[0] == '#') {
 			if (strcmp(line_header, "#") == 0) {
 				char sym = '#';
 				int t = 1;
@@ -202,8 +193,7 @@ bool ObjGL_t::load_obj(const char *path)
 					t = fscanf(file, "%c", &sym);
 				}
 			}
-		}
-		else {
+		} else {
 			printf("Unknown: %s", line_header);
 		}
 	}
