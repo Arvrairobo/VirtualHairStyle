@@ -114,7 +114,6 @@ bool ObjGL_t::load_obj(const char *path)
 	}
 	printf("%s opened\n", path);
 	while (true) {
-		//printf("in while(true)");
 		char line_header[128];
 		int res = fscanf(file, "%s", line_header);
 		if (res == EOF) break;
