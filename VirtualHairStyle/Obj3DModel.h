@@ -3,6 +3,7 @@
 #include <vector>
 #include <glm\glm.hpp>
 #include <gl\glew.h>
+#include <opencv2\imgproc.hpp>
 
 enum vbo_t {
 	VBO_VERTICES = 0,
@@ -20,8 +21,9 @@ struct Obj3DModel_t{
 class ObjGL_t {
 	GLuint vao;
 	GLuint texture_id = 0;
-	std::map <vbo_t, GLuint> vbo; // vbo_t, location
+	std::map <vbo_t, GLuint> vbo;
 	Obj3DModel_t obj;
+	cv::Mat tex_data;
 	bool load_obj(const char *path);
 	void init();
 public:
@@ -30,6 +32,7 @@ public:
 	void bind_vao();
 	void unbind_vao();
 	void gen_texture();
+	void set_texture_data(cv::Mat &data);
 	GLuint get_vbo(vbo_t type);
 	unsigned int get_vsize();
 	GLuint get_texture_id();

@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <iostream>
+#include <opencv2\imgproc.hpp>
 #include "Obj3DModel.h"
-
 
 ObjGL_t::ObjGL_t(const char *path) 
 {
@@ -32,7 +32,13 @@ void ObjGL_t::add_vbo(vbo_t type)
 	GLuint vbuf;
 	glGenBuffers(1, &vbuf);
 	glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-	glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() * sizeof(glm::vec3), &obj.vertices[0], GL_STATIC_DRAW);
+	if (type == VBO_VERTICES) {
+		glBufferData(GL_ARRAY_BUFFER, obj.vertices.size() * sizeof(glm::vec3), &obj.vertices[0], GL_STATIC_DRAW);
+	} else if (type == VBO_TEXCOORDS) {
+		glBufferData(GL_ARRAY_BUFFER, obj.uvs.size() * sizeof(glm::vec2), &obj.uvs[0], GL_STATIC_DRAW);
+	} else if (type == VBO_NORMALS) {
+		glBufferData(GL_ARRAY_BUFFER, obj.normals.size() * sizeof(glm::vec3), &obj.normals[0], GL_STATIC_DRAW);
+	}
 	vbo.insert(std::pair<vbo_t, GLuint>(type, vbuf));
 }
 
@@ -76,6 +82,12 @@ void ObjGL_t::gen_texture()
 	GLuint t = 0;
 	glGenTextures(1, &t);
 	glBindTexture(GL_TEXTURE_2D, t);
+
+	if (!tex_data.empty()) {
+		cv::flip(tex_data, tex_data, 0);
+		int w = tex_data.size().width, h = tex_data.size().height;
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, tex_data.ptr());
+	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -157,7 +169,6 @@ bool ObjGL_t::load_obj(const char *path)
 				else if (vt == true && vn == false) sscanf(str, "%d/%d", &v_idx[i], &uv_idx[i]);
 				else if (vt == true && vn == true) sscanf(str, "%d/%d/%d", &v_idx[i], &uv_idx[i], &n_idx[i]);
 			}
-
 			v_indices.push_back(v_idx[0]);
 			v_indices.push_back(v_idx[1]);
 			v_indices.push_back(v_idx[2]);
@@ -205,4 +216,9 @@ bool ObjGL_t::load_obj(const char *path)
 	for (unsigned int i = 0; i < n_indices.size(); i++) {
 		obj.normals.push_back(temp_normals[n_indices[i] - 1]);
 	}
+}
+
+void ObjGL_t::set_texture_data(cv::Mat &data)
+{
+	data.copyTo(this->tex_data);
 }
