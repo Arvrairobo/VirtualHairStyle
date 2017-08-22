@@ -1,7 +1,9 @@
-#include "PoseEstimation.h"
+#define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
-#include "HeadPos.h"
 #include <iostream>
+
+#include "PoseEstimation.h"
+#include "HeadPos.h"
 
 void draw_point(cv::Mat &img, const dlib::full_object_detection& d, const int point_idx) {
 	cv::circle(img, cv::Point(d.part(point_idx).x(), d.part(point_idx).y()), 3, cv::Scalar(255, 0, 0), -1);
@@ -62,6 +64,6 @@ void detect_2d_points(cv::Mat &img) {
 		add_point(img_points, shape, 16); // right ear
 		break;
 	}
-	if (!img_points.empty()) solve_head_pos(Mat(img_points), &img);
+	if (!img_points.empty()) solve_head_pos(cv::Mat(img_points), &img);
 	img.copyTo(background_image);
 }

@@ -1,6 +1,8 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include <map>
 #include <vector>
+
 #include <glm\glm.hpp>
 #include <gl\glew.h>
 #include <opencv2\imgproc.hpp>

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <opencv2\imgproc.hpp>
+
 #include "Obj3DModel.h"
 
 ObjGL_t::ObjGL_t(const char *path) 

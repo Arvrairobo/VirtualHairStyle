@@ -1,8 +1,11 @@
-#include "Shader.h"
-#include <GL\glew.h>
+#define _CRT_SECURE_NO_WARNINGS
 #include <fstream>
 #include <iostream>
 #include <vector>
+
+#include <GL\glew.h>
+
+#include "Shader.h"
 
 ShaderProgram_t::ShaderProgram_t()
 {

@@ -1,22 +1,19 @@
-// HeadPose.cpp : Defines the entry point for the console application.
-//
 #define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 #include <ctime>
 #include <cmath>
-#include "stdafx.h"
-
-#include <opencv/cv.h>
-#include <opencv2/highgui.hpp>
-#include <GL\glew.h>
-#include <GL\GL.h>
-#include <GL\GLU.h>
-#include <glut.h>
 #include <vector>
 #include <iostream>
 #include <fstream>
 
-//#include "glm.h"
+#include <opencv/cv.h>
+#include <opencv2/highgui.hpp>
+#include <opencv2\opencv.hpp>
+#include <GL\glew.h>
+#include <GL\GL.h>
+#include <GL\GLU.h>
+#include <glut.h>
+
 #include "HeadPos.h"
 #include "PoseEstimation.h"
 #include "Obj3DModel.h"
@@ -38,9 +35,8 @@ const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
 const GLfloat high_shininess[] = { 100.0f };
 
 int __w=250,__h=250;
-bool readFrame;
-bool stopReadFrame;
 double scale = 1.0f;
+cv::Mat cam_mat;
 
 void key(unsigned char key, int x, int y)
 {
@@ -62,17 +58,6 @@ void key(unsigned char key, int x, int y)
 		__h++;
 		__h = __h%250;
 		break;
-	case 't':
-	case 'T': {
-		readFrame = true;
-		break;
-	}
-	case 'p':
-	case 'P':
-	{
-		stopReadFrame = !stopReadFrame;
-		break;
-	}
     default:
 		printf("pressed %c\n", key);
         break;
@@ -122,75 +107,14 @@ void myGLinit()
 	glLoadIdentity();
 }
 
-/*void display(void)
-{	
-	Mat frame;
-	bool wasReadNewFrame = false;
-	clock_t t1 = clock();
-	if (capture.isOpened()) {
-		if (!stopReadFrame &&/* readFrame &&*//* capture.read(frame)) { // while
-			readFrame = false;
-			wasReadNewFrame = true;
-			if (!frame.empty()) {
-				Mat flipFrame;
-				cv::flip(frame, flipFrame, 1);
-				detect_2d_points(flipFrame);
-			} else {
-				printf(" --(!) No captured frame -- Break!"); //break;
-			}
-		}
-		int c = waitKey(10);
-	}
-	
-	// draw the image in the back
-	int vPort[4]; glGetIntegerv(GL_VIEWPORT, vPort);
-	glEnable2D();
-	drawOpenCVImageInGL(imgTex);
-	glDisable2D();
-	
-	glClear(GL_DEPTH_BUFFER_BIT); // we want to draw stuff over the image
-	glViewport(0, 0, vPort[2], vPort[3]);
-	
-	glPushMatrix();
-	
-	gluLookAt(0,0,0,0,0,1,0,-1,0);
-
-	// put the object in the right position in space
-	Vec3d tvv(tv[0],tv[1],tv[2]);
-	glTranslated(tvv[0], tvv[1], tvv[2]);
-
-	// rotate it
-	double _d[16] = {	rot[0],rot[1],rot[2],0,
-						rot[3],rot[4],rot[5],0,
-						rot[6],rot[7],rot[8],0,
-						0,	   0,	  0		,1};
-	
-	glMultMatrixd(_d);
-	
-	// draw the 3D head model
-	glColor4f(1, 1, 1, 0);*/
-	/*glmDraw(head_obj, GLM_SMOOTH);
-	glColor4f(1, 1, 0.8, 1); // color for hair + alfa == 1
-	glmDraw(hair_obj, GLM_SMOOTH | GLM_TEXTURE);
-
-	glPopMatrix();
-	
-	// restore to looking at complete viewport
-	glViewport(0, 0, vPort[2], vPort[3]); 
-	
-	glutSwapBuffers();
-	if (wasReadNewFrame) {
-		printf("fps %f ", 1/(float(clock() - t1) / CLOCKS_PER_SEC));
-	}
-}*/
 int width, height;
 
 static void update_background_texture()
 {
 	if (background_image.data != NULL) {
-		cv::Mat tmp = Mat(Size(1024, 512), CV_8UC3);
-		cv::resize(background_image, tmp, Size(1024, 512));
-		Mat ttmp = tmp(Range(0, tmp.rows), Range(0, tmp.cols));
+		cv::Mat tmp = cv::Mat(cv::Size(1024, 512), CV_8UC3);
+		cv::resize(background_image, tmp, cv::Size(1024, 512));
+		cv::Mat ttmp = tmp(cv::Range(0, tmp.rows), cv::Range(0, tmp.cols));
 
 		if (tmp.step == tmp.cols) {
 			cvtColor(tmp, ttmp, CV_GRAY2RGB);
@@ -281,10 +205,7 @@ void reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	//glOrtho(0, w, 0, h, 1.0, 100.0);
 	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	//glutPostRedisplay();
 }
 
 void init_opengl(int argc, char** argv)
@@ -302,14 +223,14 @@ void init_opengl(int argc, char** argv)
     glutKeyboardFunc(key);
 }	
 
-void solve_head_pos(Mat& ip, Mat *img) {
+void solve_head_pos(cv::Mat& ip, cv::Mat *img) {
 	int max_d = MAX(img->rows, img->cols);
-	cam_mat = (Mat_<double>(3, 3) << max_d, 0, img->cols / 2.0,
+	cam_mat = (cv::Mat_<double>(3, 3) << max_d, 0, img->cols / 2.0,
 		0, max_d, img->rows / 2.0,
 		0, 0, 1.0);
 	double _dc[] = { 0,0,0,0 };
 	
-	if (!solvePnP(op, ip, cam_mat, Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, SOLVEPNP_EPNP)) {
+	if (!solvePnP(op, ip, cam_mat, cv::Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, cv::SOLVEPNP_EPNP)) {
 		std::cout << "solvePnP was fail" << std::endl;
 	}
 	/* UNRESOLVED: Sometimes blink effect. TODO

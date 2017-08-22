@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GL\GL.h>
 #include <GL\GLU.h>
+#include <glut.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -9,21 +10,15 @@
 
 #include "PoseEstimation.h"
 #include "HeadPos.h"
-#include "OGL_OCV_common.h"
 #include "Obj3DModel.h"
 #include "Shader.h"
 
 using namespace std;
 using namespace cv;
 
-GLMmodel* head_obj;
-GLMmodel* hair_obj;
-
 std::vector<double> rv(3), tv(3);
 cv::Mat rvec(rv), tvec(tv);
 cv::Mat rmat;
-OpenCVGLTexture imgTex;
-cv::Mat cam_mat;
 cv::Mat op;
 VideoCapture capture;
 
@@ -104,6 +99,19 @@ int main(int argc, char **argv)
 	if (glewInit() != GLEW_OK)
 		throw std::exception("Failed to initialize GLEW\n");
 	
+	background_program = ShaderProgram_t("shaders\\background.vert", "shaders\\background.frag");
+	background_program.create_shader_program();
+
+	VideoCapture_t cap;
+	background_program.bind_attrib_location("texcoord");
+
+	background = new ObjGL_t();
+	background->bind_vao();
+	background->add_data(VBO_VERTICES, sizeof(background_vbuf_data), background_vbuf_data);
+	background->gen_texture();
+	background->add_data(VBO_TEXCOORDS, sizeof(background_texcoords), background_texcoords);
+	background->unbind_vao();
+
 	head_program = ShaderProgram_t("shaders\\head.vert", "shaders\\head.frag");
 	head_program.create_shader_program();
 	
@@ -125,19 +133,6 @@ int main(int argc, char **argv)
 	hair->add_vbo(VBO_TEXCOORDS);
 	hair->unbind_vao();
 
-	background_program = ShaderProgram_t("shaders\\background.vert", "shaders\\background.frag");
-	background_program.create_shader_program();
-
-	VideoCapture_t cap;
-	background_program.bind_attrib_location("texcoord");
-
-	background = new ObjGL_t();
-	background->bind_vao(); 
-	background->add_data(VBO_VERTICES, sizeof(background_vbuf_data), background_vbuf_data);
-	background->gen_texture();
-	background->add_data(VBO_TEXCOORDS, sizeof(background_texcoords), background_texcoords);
-	background->unbind_vao();
-
 	rvec = cv::Mat(rv);
 	double _d[9] = { 1,0,0,
 		0,-1,0,
@@ -152,42 +147,3 @@ int main(int argc, char **argv)
 	background->~ObjGL_t();
 	hair->~ObjGL_t();
 }
-/*
-int main(int argc, char **argv) {
-	
-
-	head_obj = glmReadOBJ("head-obj.obj");
-	hair_obj = glmReadOBJ("hair.obj");
-	op = Mat(modelPoints);
-	/*Scalar m = mean(Mat(modelPoints));
-	//op = op - m;
-
-	//assert(norm(mean(op)) < 1e-05); //make sure is centered
-
-	//op = op + Scalar(0,0,25);
-
-	cout << "model points " << op << endl;*
-
-	rvec = Mat(rv);
-	double _d[9] = { 1,0,0,
-		0,-1,0,
-		0,0,-1 };
-	Rodrigues(Mat(3, 3, CV_64FC1, _d), rvec);
-	tv[0] = 0; tv[1] = 0; tv[2] = 0;
-	tvec = Mat(tv);
-
-	cam_mat = Mat(3, 3, CV_64FC1);
-
-	init_opengl(argc, argv);
-	// prepare OpenCV-OpenGL images
-	imgTex = MakeOpenCVGLTexture(Mat());
-
-	//capture.open(1);
-	capture.open("C:\\Users\\iantv\\Videos\\i.avi");
-
-	detector = dlib::get_frontal_face_detector();
-	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> pose_model;
-
-	glutMainLoop();
-	return 0;
-}*/

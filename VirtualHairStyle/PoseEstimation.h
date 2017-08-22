@@ -10,7 +10,6 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv/cxcore.h>
-#include "BaseDetector.h"
 
 #include <dlib/opencv.h>
 #include <dlib/image_processing/frontal_face_detector.h>
