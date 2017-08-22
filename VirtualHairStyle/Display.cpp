@@ -14,7 +14,7 @@
 #include <GL\GLU.h>
 #include <glut.h>
 
-#include "HeadPos.h"
+#include "Display.h"
 #include "PoseEstimation.h"
 #include "Obj3DModel.h"
 #include "Shader.h"

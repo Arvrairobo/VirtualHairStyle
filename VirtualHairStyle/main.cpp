@@ -9,7 +9,7 @@
 #include <thread>
 
 #include "PoseEstimation.h"
-#include "HeadPos.h"
+#include "Display.h"
 #include "Obj3DModel.h"
 #include "Shader.h"
 

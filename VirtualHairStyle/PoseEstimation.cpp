@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "PoseEstimation.h"
-#include "HeadPos.h"
+#include "Display.h"
 
 cv::Mat cam_mat;
 
