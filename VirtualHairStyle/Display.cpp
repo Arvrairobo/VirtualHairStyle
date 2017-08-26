@@ -74,9 +74,6 @@ void myGLinit()
 {
 //    glutSetOption ( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION ) ;
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-
 	glShadeModel(GL_SMOOTH);
 
     glEnable(GL_DEPTH_TEST);
