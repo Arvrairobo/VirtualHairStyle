@@ -44,7 +44,7 @@ private:
 		while (_capture.isOpened()) {
 			if (_capture.read(_frame)) {
 				if (!_frame.empty()) {
-					cv::flip(_frame, _frame, 1);
+					//cv::flip(_frame, _frame, 1);
 					detect_2d_points(_frame);
 					glutPostWindowRedisplay(glutwin);
 				} else {
