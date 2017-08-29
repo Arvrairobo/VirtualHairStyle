@@ -14,7 +14,7 @@ void solve_head_pos(cv::Mat& ip, cv::Mat *img) {
 		0, 0, 1.0);
 	double _dc[] = { 0,0,0,0 };
 
-	if (!solvePnP(op, ip, cam_mat, cv::Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, cv::SOLVEPNP_EPNP)) {
+	if (!cv::solvePnP(op, ip, cam_mat, cv::Mat(1, 4, CV_64FC1, _dc), rvec, tvec, true, cv::SOLVEPNP_EPNP)) {
 		std::cout << "solvePnP was fail" << std::endl;
 	}
 	/* UNRESOLVED: Sometimes blink effect. TODO
