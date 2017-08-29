@@ -180,6 +180,9 @@ void display()
 	glDrawBuffer(GL_FRONT_AND_BACK);
 	
 	// Render hair
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glDepthMask(GL_FALSE);
 	hair_program.use();
 	glBindTexture(GL_TEXTURE_2D, hair->get_texture_id());
 	hair->bind_vao();
@@ -188,7 +191,8 @@ void display()
 	hair_program.draw_vertices(0, hair->get_vbo(VBO_VERTICES), 3, GL_TRIANGLES, 0, hair->get_vsize());
 	hair_program.enable_attr(hair_program.get_attrib_location("vertexUV"));
 	hair_program.bind_array_buffer(hair_program.get_attrib_location("vertexUV"), hair->get_vbo(VBO_TEXCOORDS), 2);
-	
+	glDepthMask(GL_TRUE);
+	glDisable(GL_CULL_FACE);
 	glutSwapBuffers();
 }
 
@@ -207,7 +211,7 @@ void reshape(int w, int h)
 void init_opengl(int argc, char** argv)
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH ); // | GLUT_MULTISAMPLE
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH ); // | GLUT_MULTISAMPLE
 	glutInitWindowSize(800, 600);
 	
     glutwin = glutCreateWindow("Virtual Hairstyle");
