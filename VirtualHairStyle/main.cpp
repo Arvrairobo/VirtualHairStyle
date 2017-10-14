@@ -25,8 +25,6 @@ VideoCapture capture;
 dlib::frontal_face_detector detector;
 dlib::shape_predictor pose_model;
 
-int glutwin;
-
 class VideoCapture_t {
 public:
 	VideoCapture_t(int cam_idx = 0) : _thr(&VideoCapture_t::run, this), _cam_idx(cam_idx) {}
@@ -45,7 +43,6 @@ private:
 				if (!_frame.empty()) {
 					//cv::flip(_frame, _frame, 1);
 					detect_2d_points(_frame);
-					glutPostWindowRedisplay(glutwin);
 				} else {
 					printf(" --(!) No captured frame -- Break!");
 					break;

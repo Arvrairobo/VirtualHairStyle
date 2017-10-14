@@ -7,7 +7,6 @@
 
 void init_opengl(int argc, char** argv);
 
-extern int glutwin;
 extern std::vector<double> rv, tv;
 extern cv::Mat rvec, tvec;
 extern cv::Mat rmat;

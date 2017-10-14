@@ -214,11 +214,12 @@ void init_opengl(int argc, char** argv)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH ); // | GLUT_MULTISAMPLE
 	glutInitWindowSize(800, 600);
 	
-    glutwin = glutCreateWindow("Virtual Hairstyle");
+    glutCreateWindow("Virtual Hairstyle");
 	
 	myGLinit();
 	
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
+	glutIdleFunc(display);
     glutKeyboardFunc(key);
 }
