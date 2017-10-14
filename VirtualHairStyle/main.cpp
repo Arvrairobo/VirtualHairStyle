@@ -38,8 +38,7 @@ private:
 	int _cam_idx;
 	void run() {
 		cv::VideoCapture _capture;
-		//_capture.open(_cam_idx);
-		_capture.open("C:\\Users\\iantv\\Videos\\i.avi");
+		_capture.open(0);
 		cv::Mat _frame;
 		while (_capture.isOpened()) {
 			if (_capture.read(_frame)) {
