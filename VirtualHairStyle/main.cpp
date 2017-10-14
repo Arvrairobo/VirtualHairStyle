@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	head_program = ShaderProgram_t("shaders\\head.vert", "shaders\\head.frag");
 	head_program.create_shader_program();
 	
-	head = new ObjGL_t("3D models\\head_v3.obj"); 
+	head = new ObjGL_t("3D models\\head.obj");
 	head->bind_vao();
 	head->add_vbo(VBO_VERTICES);
 	head->unbind_vao();
