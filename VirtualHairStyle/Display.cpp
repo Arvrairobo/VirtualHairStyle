@@ -160,8 +160,34 @@ static void background_draw()
     background_program.bind_array_buffer(background_program.get_attrib_location("texcoord"), background->get_vbo(VBO_TEXCOORDS), 2);
 }
 
+// todo move to utils
+class glutFpsScanner {
+private:
+    int lastTime;
+    int frameCount;
+    float fps;
+public:
+    glutFpsScanner::glutFpsScanner() {
+        lastTime = 0;
+        frameCount = 0;
+        fps = 0;
+    }
+
+    float getGlutFps() {
+        ++frameCount;
+        int time = glutGet(GLUT_ELAPSED_TIME);
+        if (time - lastTime > 1000) {
+            fps = frameCount * 1000.0 / (time - lastTime);
+            lastTime = time;
+            frameCount = 0;
+        }
+        return fps;
+    }
+} fps;
+
 void display()
 {
+    std::cout << fps.getGlutFps() << std::endl;
     glClearColor(0.0, 1.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
