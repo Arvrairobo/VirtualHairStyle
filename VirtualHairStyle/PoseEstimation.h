@@ -8,7 +8,11 @@
 #include <opencv2/objdetect.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#if (CV_VERSION_MAJOR == 3 && CV_VERSION_MINOR == 3)
+#include <opencv2/video/tracking.hpp>
+#else
 #include <opencv2/tracking.hpp>
+#endif
 #include <opencv/cxcore.h>
 
 #include <dlib/opencv.h>
