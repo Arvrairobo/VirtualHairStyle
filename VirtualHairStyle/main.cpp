@@ -124,7 +124,7 @@ int main(int argc, char **argv)
     hair = new ObjGL_t("3D models\\hair\\hair_v1.obj");
     hair->bind_vao();
     hair->add_vbo(VBO_VERTICES);
-    hair->set_texture_data(cv::imread("3D models\\hair\\hair_texture_1.png", IMREAD_UNCHANGED));
+    hair->set_texture_data(cv::imread("3D models\\hair\\texhair_v1.png", IMREAD_UNCHANGED));
     hair->gen_texture();
     hair->add_vbo(VBO_TEXCOORDS);
     hair->unbind_vao();
